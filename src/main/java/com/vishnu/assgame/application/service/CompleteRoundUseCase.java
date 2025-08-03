@@ -2,6 +2,7 @@ package com.vishnu.assgame.application.service;
 
 import com.vishnu.assgame.application.dto.PlayTurnResult;
 import com.vishnu.assgame.application.dto.RoundResult;
+import com.vishnu.assgame.application.factory.CardProviderFactory;
 import com.vishnu.assgame.domain.model.Card;
 import com.vishnu.assgame.domain.model.Player;
 import com.vishnu.assgame.domain.model.Suit;
@@ -14,11 +15,11 @@ import java.util.Map;
 public class CompleteRoundUseCase {
 
     private final PlayTurnUseCase playTurn;
-    private final CardProvider cardProvider;
+    private final CardProviderFactory cardProviderFactory;
 
-    public CompleteRoundUseCase(PlayTurnUseCase playTurn, CardProvider cardProvider) {
+    public CompleteRoundUseCase(PlayTurnUseCase playTurn, CardProviderFactory cardProviderFactory) {
         this.playTurn = playTurn;
-        this.cardProvider = cardProvider;
+        this.cardProviderFactory = cardProviderFactory;
     }
 
     public RoundResult completeRound(Player starter,
@@ -36,6 +37,7 @@ public class CompleteRoundUseCase {
         while (processedTurns < totalPlayers) {
             Player currentPlayer = clockwisePlayers.get(turnIndex);
             List<Card> currentHand = hands.get(currentPlayer);
+            CardProvider cardProvider = cardProviderFactory.forPlayer(currentPlayer);
             Card chosenCard = cardProvider.chooseCard(currentPlayer, roundSuit, currentHand, playedHistory);
             if (roundSuit == null) {
                 roundSuit = chosenCard.suit();

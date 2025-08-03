@@ -1,11 +1,11 @@
 package com.vishnu.assgame.application.service;
 
 import com.vishnu.assgame.application.dto.RoundResult;
+import com.vishnu.assgame.application.factory.CardProviderFactory;
 import com.vishnu.assgame.domain.model.*;
 import com.vishnu.assgame.domain.service.CardProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,23 +14,26 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CompleteRoundUseCaseTest {
-
-    private CardProvider cardProvider;
-    private CompleteRoundUseCase roundUseCase;
 
     private final Player vishnu = new Player("Vishnu", PlayerType.HUMAN);
     private final Player arya = new Player("Arya", PlayerType.HUMAN);
     private final Player rahul = new Player("Rahul", PlayerType.HUMAN);
     private final Player priya = new Player("Priya", PlayerType.HUMAN);
 
+    private CardProvider cardProvider;
+    private CompleteRoundUseCase roundUseCase;
+
     @BeforeEach
     void setUp() {
         PlayTurnUseCase playTurnUseCase = new PlayTurnUseCase();
-        cardProvider = Mockito.mock(CardProvider.class);
-        roundUseCase = new CompleteRoundUseCase(playTurnUseCase, cardProvider);
+        cardProvider = mock(CardProvider.class);
+        CardProviderFactory factory = mock(CardProviderFactory.class);
+        when(factory.forPlayer(any(Player.class))).thenReturn(cardProvider);
+        roundUseCase = new CompleteRoundUseCase(playTurnUseCase, factory);
     }
 
     @Test
